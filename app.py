@@ -100,7 +100,7 @@ from flask import Flask, render_template, request
 import pickle
 
 
-p=drilldown()
+#p=drilldown()
 app = Flask(__name__)
 app.secret_key = '12345'
 
@@ -126,7 +126,7 @@ app.secret_key = '12345'
   #      return 0
 @app.route('/')
 def diff():
-    #p=drilldown()
+    p=drilldown()
     return render_template('diff.html',p=p)
 
 if __name__ == '__main__':
