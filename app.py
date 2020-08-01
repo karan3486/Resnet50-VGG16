@@ -6,6 +6,7 @@
 
 import pandas as pd
 import glob
+import os
 
 
 # In[29]:
@@ -130,7 +131,7 @@ def diff():
     return render_template('diff.html',p=p)
 
 if __name__ == '__main__':
-	app.run(port=8080)
+	app.run(debug=True)
 
 
 
