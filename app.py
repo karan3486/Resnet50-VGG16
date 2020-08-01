@@ -67,7 +67,7 @@ def drilldown():
         
             
     #print(path)
-        data_path = glob.glob(path + "/*.xls")
+        data_path = glob.glob(os.path.abspath(path) + "/*.xls")
     #print(da ta_path)
         if len(data_path)>0:
             data=pd.read_excel(data_path[0])
