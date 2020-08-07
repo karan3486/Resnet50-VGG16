@@ -5,7 +5,7 @@
 
 
 import pandas as pd
-import glob
+
 import os
 
 
@@ -14,82 +14,79 @@ import os
 
 def drilldown():
     
-    All_paths=[r'C:\Users\drilldown\Arkeologisk Hk',
-              r'C:\Users\drilldown\Askerbadene HK Server',
-              r'C:\Users\drilldown\Boreal',
-              r'C:\Users\drilldown\Bunnpris PROD HK Server',
-              r'C:\Users\drilldown\DNOVA_HV4_BØ Sommerland HK server',
-              r'C:\Users\drilldown\DNOVA_HV4_Hugos Tivoli HK Server',
-              r'C:\Users\drilldown\DNOVA_HV4_Tess HK',
-              r'C:\Users\drilldown\DNOVA_HV5_Klatreverket AS Server',
-              r'C:\Users\drilldown\DNOVA_HV5_See Salmon HK Server',
-              r'C:\Users\drilldown\DNOVA_HV5_SiB DN HK Server',
-              r'C:\Users\drilldown\DNOVA_HV5_SiB HK Server',
-              r'C:\Users\drilldown\Drammensbadet HK Server',
-              r'C:\Users\drilldown\Flise F Bergen',
-              r'C:\Users\drilldown\Flise FKOA',
-              r'C:\Users\drilldown\Flisekompaniet HK server',
-              r'C:\Users\drilldown\Flisekompaniet-FTrondheim-mini HK',
-              r'C:\Users\drilldown\Football Shop HK Server',
-              r'C:\Users\drilldown\Fretex HK',
-              r'C:\Users\drilldown\Gausbygg Outlet',
-              r'C:\Users\drilldown\Historical-Viking museum HK server',
-              r'C:\Users\drilldown\Hunderfossen Server',
-              r'C:\Users\drilldown\ISS Nordea HK',
-              r'C:\Users\drilldown\ISS Prod HK Server',
-              r'C:\Users\drilldown\Kraft Norway HK',
-              r'C:\Users\drilldown\Kraft Sweden HK server',
-              r'C:\Users\drilldown\Lampemagsinet',
-              r'C:\Users\drilldown\Leif Skalleberg HK Server',
-              r'C:\Users\drilldown\MIX Production HK',
-              r'C:\Users\drilldown\Munch Museum Server',
-              r'C:\Users\drilldown\Nidarosdomen HK server',
-              r'C:\Users\drilldown\Norges varemess HK server',
-              r'C:\Users\drilldown\Norled HK APP Server',
-              r'C:\Users\drilldown\Oslo Sportslager HK server',
-              r'C:\Users\drilldown\OslobadeneERPHK',
-              r'C:\Users\drilldown\Paahjul HK Server',
-              r'C:\Users\drilldown\Snarkjop',
-              r'C:\Users\drilldown\Spinn HK',
-              r'C:\Users\drilldown\Sprell HK',
-              r'C:\Users\drilldown\Tilbords HK server',
-              r'C:\Users\drilldown\Troms politidistrikt Server',
-              r'C:\Users\drilldown\Trondheim Klatresenter HK',
-              r'C:\Users\drilldown\Tropehagen',
-              r'C:\Users\drilldown\Tusenfryd HK',
-              r'C:\Users\drilldown\Visit Rjunkan',
-              r'C:\Users\drilldown\YummyHeaven HK server',
-              r'C:\Users\drilldown\Zoo-1 HK server'
-               
-               ]
     diff=[]
-    
-    for path in All_paths:
+    for dirpath,dirnames,filenames in os.walk(r'C:\Users\drilldown'):
+        if dirpath==r'C:\Users\drilldown':
+            continue
         
+        if  dirpath==r'C:\Users\drilldown\Kraft Sweden HK server':
+            continue
+        if  dirpath==r'C:\Users\drilldown\Trondheim Klatresenter HK':
+            continue       
+           #print(dirpath)
+            #print(dirnames)
+           #print(filenames)
+    
+        if filenames[0][-1]=='l':
+                   
+            str1=''
+            file=str1.join(filenames)
+            data=pd.read_html(os.path.join(dirpath,file))
+            data=pd.DataFrame(data[0])
+            #print(data.head(2))
+            #print(dirpath)
+           
+            #if len(data.columns)
+
+        
+            data=data.drop([0,1],axis=0)
+            data=data.drop([0,1,2],axis=1)
+            data=data[[3,4,5,48]]
+        
+            data=data.astype('float64')
+            drilldown_diff=list(data[3]-data[5])
+            Middle_diff=list(data[4])
+            Payback=list(data[48])
+            if dirpath==r'C:\Users\drilldown\Bunnpris PROD HK Server':
+                
             
-    #print(path)
-        data_path = glob.glob(os.path.abspath(path) + "/*.xls")
-    #print(da ta_path)
-        if len(data_path)>0:
-            data=pd.read_excel(data_path[0])
-            filter_data=data.iloc[-1:, 2:5]
-        #payback=data['Payback'][1]
-            if (filter_data.iloc[:,0]-filter_data.iloc[:,-1] >= 1).iloc[0] or (filter_data.iloc[:,0]-filter_data.iloc[:,-1] <= -1).iloc[0]:
-                print(path[19:],end='')
-                print('DrillDown Difference')
-                x=path[19:]+'DrillDown Difference'
-                diff.append(x)
-                #print((filter_data.iloc[:,0]-filter_data.iloc[:,-1] > 1).iloc[0])
-                #print((filter_data.iloc[:,0]-filter_data.iloc[:,-1] > -1).iloc[0])
-            if (filter_data.iloc[:,1]>=1).iloc[0] or (filter_data.iloc[:,1] <= -1).iloc[0]:
-                print(path[19:],end='')
-                print('DrillDown Middle value Difference')
-                x1=path[19:]+'DrillDown Middle value Difference'
-                diff.append(x1)
-            if (data.iloc[-1:,-1] <0).iloc[0]:
-                print(path[19:],end='')
-                print('Payback difference')
-                x1=path[19:]+'Payback difference'
+                if drilldown_diff[-1]>0 or drilldown_diff[-1]<0:
+                    x=dirpath[19:]+'Drilldown Difference'
+                    #print(x)
+                    diff.append(x)
+                
+                if Middle_diff[-1]>0 or Middle_diff[-1]<0:
+                    x=dirpath[19:]+'Middle Difference'
+                    diff.append(x)
+                    #print(x)
+            
+                   #print(Payback)
+                   #print(dirpath)
+                if Payback[-1]<0:
+                    x=dirpath[19:]+'Payback Difference'
+                    diff.append(x)
+                    #print(x) 
+            else:
+                
+            
+                if drilldown_diff[-1]>0 or drilldown_diff[-1]<0:
+                    x=dirpath[19:]+'Drilldown Difference'
+                    #print(x)
+                    diff.append(x)
+        
+                if Middle_diff[-1]>=1 or Middle_diff[-1]<=-1:
+                    x=dirpath[19:]+'Middle Difference'
+                    diff.append(x)
+                    #print(x)
+        
+                #print(Payback)
+                #print(dirpath)
+                if Payback[-1]<0:
+                    x=dirpath[19:]+'Payback Difference'
+                    diff.append(x)
+                    #print(x)
+            
+                # print(data.head(4))
     return diff
 
 
@@ -106,25 +103,6 @@ app = Flask(__name__)
 app.secret_key = '12345'
 
 
-
-#@app.route('/')
-#def home():
-#	return render_template('index.html')
-
-#@app.route('/predict', methods=['POST'])
-#def predict():
-#  #  try:
-        
- #       if request.method == 'POST':
-            
-  #          message = request.form['message']
-    #        data = [message]
-   #         vect = cv.transform(data).toarray()
-    #        my_prediction = classifier.predict(vect)
-  #          #p=drilldown()
- #           return render_template('result.html', prediction=my_prediction)
-    #except Exception as e:
-  #      return 0
 @app.route('/')
 def diff():
     p=drilldown()
